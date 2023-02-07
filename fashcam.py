@@ -7,26 +7,11 @@ import pandas as pd
 from keras.models import Model
 from keras.models import load_model
 import cv2
-from keras.models import load_model, model_from_json
+from keras.models import load_model
 # import feature_extraction_cosine
 import feature_extraction_cosine
 from streamlit_cropper import st_cropper
 from io import StringIO, BytesIO
-
-
-# function to extract the image once we get it and pass the extracted version to the model
-def image_extractor(image):
-    # image = Image.open(image)
-    size = (224, 224)
-    image = ImageOps.fit(image, size, Image.ANTIALIAS)
-    image = np.asarray(image)
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    img_reshape = image[np.newaxis, ...]
-    img_reshape = img_reshape[..., np.newaxis]
-
-    return img_reshape
-
-
 unique_types = ['Backpacks',
                 'Belts',
                 'Bra',
@@ -37,7 +22,7 @@ unique_types = ['Backpacks',
                 'Handbags',
                 'Heels',
                 'Leggings',
-                'related-products',
+                'Outwear',
                 'pijamas',
                 'Ring',
                 'Sandals',
@@ -51,10 +36,24 @@ unique_types = ['Backpacks',
                 'Tops',
                 'Trousers',
                 'Tshirts']
+
+# function to extract the image once we get it and pass the extracted version to the model
+
+
+def image_extractor(image):
+    size = (224, 224)
+    image = ImageOps.fit(image, size, Image.ANTIALIAS)
+    image = np.asarray(image)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    img_reshape = image[np.newaxis, ...]
+    img_reshape = img_reshape[..., np.newaxis]
+
+    return img_reshape
+
+
 st.set_page_config(page_title="Image Recommendation System", layout="wide")
 
-
-model = load_model('final_model_v3.h5')
+model = load_model("final_model_v3.h5")
 
 image = Image.open('./Fashion_Camera3.jpg')
 new_image = image.resize((900, 180))
@@ -79,7 +78,7 @@ if file:
 
     # image = image.resize((250, 250))
     cropped_img = st_cropper(image)
-    extracted_img = image_extractor(cropped_img)
+    extracted_img = image_extractor(image)
     st.write("Preview")
     b = BytesIO()
     cropped_img.save(b, format="jpeg")
@@ -87,12 +86,14 @@ if file:
     # displaying image
 
     st.image(final_img, width=150)
-    # predictions = model.predict(extracted_img)
-    # propability through softmax
+    predictions = model.predict(extracted_img)
 
-    # propability = np.max(predictions)
-    # st.write("The model is ", round(propability*100, 2), "% sure that the image is a ",
-    #         'unique_types[np.argmax(predictions)])
+    softmax = np.exp(predictions) / \
+        np.sum(np.exp(predictions), axis=-1, keepdims=True)
+
+    propability = round(softmax[0][0], 2)
+    st.write("we are searching in our shop for similar " +
+             unique_types[np.argmax(predictions)] + propability)
 
     similar_pictures = feature_extraction_cosine.get_closest_images(
         extracted_img, 'related-products')

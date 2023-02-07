@@ -42,8 +42,9 @@ unique_types = ['Backpacks',
 
 def get_closest_images(img_reshape, available_class):
     nb_closest_images = 5
-
+    # load h5 model
     features = np.genfromtxt(f'{available_class}.csv', delimiter=',')
+    # features = np.genfromtxt(f'related-products.h5', delimiter=',')
     # get the features of the image
     model = ResNet50(weights='imagenet', include_top=True)
     feat_extractor = Model(
@@ -72,4 +73,4 @@ def get_closest_images(img_reshape, available_class):
 
 
 # print(get_closest_images(
-#     r"C:\Users\mrpal\OneDrive\Desktop\fashcam-final\finalDataset\Belts\3721.jpg", "Outwear"))
+#     r"C:\Users\mrpal\OneDrive\Desktop\fashcam-v3\finalDataset\Belts\3721.jpg", "Outwear"))

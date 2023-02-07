@@ -118,6 +118,9 @@ shopfiles = os.listdir('asos/only/')
 # add a path to each image
 image_names = ['asos/only/' + f for f in shopfiles]
 
+# shuffle the urls
+image_names = np.random.permutation(image_names)
+
 
 def get_asos_features(img_paths):
     try:
@@ -144,7 +147,9 @@ def get_asos_features(img_paths):
         imgs_features = feat_extractor.predict(processed_imgs)
         print("features successfully extracted!")
         # save it as csv file
+
         np.savetxt('related-products.csv', imgs_features, delimiter=",")
+
     except Exception as e:
         print(f"An error occurred: {str(e)}")
 
@@ -154,4 +159,4 @@ def get_asos_features(img_paths):
 if __name__ == "__main__":
     img_paths = ["./img1.jpg", "./img2.jpg", "./img3.jpg"]
 
-    get_asos_features(image_names[:300])
+    get_asos_features(image_names[:6000])
