@@ -10,12 +10,13 @@ import cv2
 from keras.models import load_model, model_from_json
 # import feature_extraction_cosine
 import feature_extraction_cosine
+from streamlit_cropper import st_cropper
+from io import StringIO, BytesIO
+
 
 # function to extract the image once we get it and pass the extracted version to the model
-
-
 def image_extractor(image):
-    image = Image.open(image)
+    # image = Image.open(image)
     size = (224, 224)
     image = ImageOps.fit(image, size, Image.ANTIALIAS)
     image = np.asarray(image)
@@ -53,59 +54,97 @@ unique_types = ['Backpacks',
 st.set_page_config(page_title="Image Recommendation System", layout="wide")
 
 
-model = load_model('final_model_v2.h5')
-col1, mid, col2 = st.columns([1, 15, 100])
-with col1:
-    st.image('./Fashion_Camera2.jpg', width=150)
-with col2:
-    #st.write('A Name')
-    st.markdown('<h1 style="color: red;font-size: 70px;">FashCam</h1>',
-                unsafe_allow_html=True)
-    st.markdown('<h1 style="color: red;font-size: 30px;">...an Image Search Engine</h1>',
-                unsafe_allow_html=True)
+model = load_model('final_model_v3.h5')
 
-st.markdown("Our idea is to build a new search engine **:red[_FashCam_]**:camera:.We have developed a cutting-edge image recognition technology that makes it easy to find the fashion you want. With **:red[_FashCam_]**:camera:, you can simply take a picture of an item or upload an image and our algorithm will match it with similar products available for purchase online. It's that simple!")
+image = Image.open('./Fashion_Camera3.jpg')
+new_image = image.resize((900, 180))
+st.image(new_image)
+st.markdown('<h1 style="color: red;font-size: 70px;">FashCam</h1>',
+            unsafe_allow_html=True)
+
+st.markdown(
+    "A new search engine, developed with a cutting-edge image recognition technology that makes it easy to find the fashion you want. With **:red[_FashCam_]**:camera:, you can simply take picture or upload an image and our algorithm will match it with similar products available for purchase online. It's that simple!")
 st.sidebar.write("## Upload or Take a Picture")
 
-# Upload the image file
-file = st.sidebar.file_uploader(
-    "Choose an image from your computer", type=["jpg", "jpeg", "png"])
+choice = st.sidebar.radio(
+    "Choose an option", ('Upload an image', 'Take a picture'))
+if choice == 'Upload an image':
+    file = st.sidebar.file_uploader(
+        "Choose an image from your computer", type=["jpg", "jpeg", "png"])
 
+if file:
+    st.write(
+        "Thank you for uploading the image. Please select any one product at a time to have a look!")
+    image = Image.open(file)
 
-def import_and_predict(image_data, model):
+    # image = image.resize((250, 250))
+    cropped_img = st_cropper(image)
+    extracted_img = image_extractor(cropped_img)
+    st.write("Preview")
+    b = BytesIO()
+    cropped_img.save(b, format="jpeg")
+    final_img = Image.open(b)
+    # displaying image
 
-    prediction = model.predict(image_data)
-
-    return prediction
-
-
-if file is None:
-    st.sidebar.subheader(
-        "Please upload a product image using the browse button :point_up:")
-    st.sidebar.write(
-        "Sample image can be found [here](https://github.com/prachiagrl83/WBS/tree/Prachi/Sample_images)!")
-
-else:
-    # numerate it with the help of the function
-    extracted_img = image_extractor(file)
-    st.sidebar.subheader(
-        "Thank you for uploading the image. Below you can see image which you have just uploaded!")
-    st.subheader("Scroll down to see the Top Similar Products...")
-    st.sidebar.image(file, width=250)
-
-    # predictions = import_and_predict(extracted_img, model)
+    st.image(final_img, width=150)
     predictions = model.predict(extracted_img)
-
-    result = st.write("we are searching in our shop for similar " +
-                      unique_types[np.argmax(predictions)])
-
-# display the 3 images in a row
-    col1, col2, col3 = st.columns(3)
-    closest_img1, closest_img2, closest_img3 = feature_extraction_cosine.get_closest_images(
+    similar_pictures = feature_extraction_cosine.get_closest_images(
         extracted_img, unique_types[np.argmax(predictions)])
-    with col1:
-        st.image(closest_img1)
-    with col2:
-        st.image(closest_img2)
-    with col3:
-        st.image(closest_img3)
+
+    st.subheader("we are searching in our shop for similar " +
+                 unique_types[np.argmax(predictions)])
+
+  #    display the 3 images in a row
+    col1, col2, col3 = st.columns(3)
+    if len(similar_pictures):
+        closest_img1, closest_img2, closest_img3 = similar_pictures
+        with col1:
+            st.image(closest_img1)
+        with col2:
+            st.image(closest_img2)
+        with col3:
+            st.image(closest_img3)
+    else:
+        st.write("Sorry, we could not find any similar products")
+else:
+    st.write("Upload an image")
+
+
+if choice == 'Take a picture':
+    # st.write('Live')
+    picture = st.sidebar.camera_input("Take a picture")
+    if picture:
+        # st.image(picture)
+        st.write(
+            "Thank you for click the picture. Please select any one product at a time, you want to see!")
+        image = Image.open(picture)
+        # image = image.resize((250, 250))
+        cropped_img = st_cropper(image)
+        st.write("Preview")
+        b = BytesIO()
+        cropped_img.save(b, format="jpeg")
+        final_img = Image.open(b)
+        # displaying image
+        st.image(final_img, width=150)
+        extracted_img = image_extractor(file)
+        predictions = model.predict(extracted_img)
+    similar_pictures = feature_extraction_cosine.get_closest_images(
+        extracted_img, unique_types[np.argmax(predictions)])
+
+    st.subheader("we are searching in our shop for similar " +
+                 unique_types[np.argmax(predictions)])
+
+  #    display the 3 images in a row
+    col1, col2, col3 = st.columns(3)
+    if len(similar_pictures):
+        closest_img1, closest_img2, closest_img3 = similar_pictures
+        with col1:
+            st.image(closest_img1)
+        with col2:
+            st.image(closest_img2)
+        with col3:
+            st.image(closest_img3)
+    else:
+        st.write("Sorry, we could not find any similar products")
+else:
+    st.write("Take a picture")
