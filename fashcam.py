@@ -37,7 +37,7 @@ unique_types = ['Backpacks',
                 'Handbags',
                 'Heels',
                 'Leggings',
-                'Outwear',
+                'related-products',
                 'pijamas',
                 'Ring',
                 'Sandals',
@@ -87,12 +87,18 @@ if file:
     # displaying image
 
     st.image(final_img, width=150)
-    predictions = model.predict(extracted_img)
+    # predictions = model.predict(extracted_img)
+    # propability through softmax
+
+    # propability = np.max(predictions)
+    # st.write("The model is ", round(propability*100, 2), "% sure that the image is a ",
+    #         'unique_types[np.argmax(predictions)])
+
     similar_pictures = feature_extraction_cosine.get_closest_images(
-        extracted_img, unique_types[np.argmax(predictions)])
+        extracted_img, 'related-products')
 
     st.subheader("we are searching in our shop for similar " +
-                 unique_types[np.argmax(predictions)])
+                 'related-products')
 
   #    display the 3 images in a row
     col1, col2, col3 = st.columns(3)
@@ -129,10 +135,10 @@ if choice == 'Take a picture':
         extracted_img = image_extractor(file)
         predictions = model.predict(extracted_img)
     similar_pictures = feature_extraction_cosine.get_closest_images(
-        extracted_img, unique_types[np.argmax(predictions)])
+        extracted_img, 'related-products')
 
     st.subheader("we are searching in our shop for similar " +
-                 unique_types[np.argmax(predictions)])
+                 'related-products')
 
   #    display the 3 images in a row
     col1, col2, col3 = st.columns(3)

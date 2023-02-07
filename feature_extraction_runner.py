@@ -114,7 +114,44 @@ def get_features(img_paths, category_folder_name):
 #              f for f in os.listdir('finalDataset/Outwear')]
 # get_features(shopfiles, "0utwear")
 # create features for every category
-for i in range(len(unique_types)):
-    shopfiles = ['finalDataset/' + unique_types[i] + '/' +
-                 f for f in os.listdir('finalDataset/' + unique_types[i])]
-    get_features(shopfiles, unique_types[i])
+shopfiles = os.listdir('asos/only/')
+# add a path to each image
+image_names = ['asos/only/' + f for f in shopfiles]
+
+
+def get_asos_features(img_paths):
+    try:
+        importedImages = []
+        for f in img_paths:
+            try:
+                filename = f
+                original = load_img(filename, target_size=(224, 224))
+                numpy_image = img_to_array(original)
+                image_batch = np.expand_dims(numpy_image, axis=0)
+                importedImages.append(image_batch)
+            except:
+                print(f"Failed to load image: {filename}")
+                continue
+        images = np.vstack(importedImages)
+        processed_imgs = preprocess_input(images.copy())
+        # load the model
+
+        # Load the pre-trained ResNet50 model, with the top layer removed
+        model = ResNet50(weights='imagenet', include_top=True)
+        feat_extractor = Model(
+            inputs=model.input, outputs=model.get_layer("avg_pool").output)
+        feat_extractor.summary()
+        imgs_features = feat_extractor.predict(processed_imgs)
+        print("features successfully extracted!")
+        # save it as csv file
+        np.savetxt('related-products.csv', imgs_features, delimiter=",")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
+    return 0
+
+
+if __name__ == "__main__":
+    img_paths = ["./img1.jpg", "./img2.jpg", "./img3.jpg"]
+
+    get_asos_features(image_names[:300])

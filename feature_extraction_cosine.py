@@ -55,8 +55,9 @@ def get_closest_images(img_reshape, available_class):
     closest_imgs_indexes = cosSimilarities.argsort()[0][-nb_closest_images:]
     # similarity score of the closest images
     closest_imgs_similarities = cosSimilarities[0][closest_imgs_indexes]
-    shopfiles = [f'finalDataset/{available_class}/' +
-                 f for f in os.listdir(f'finalDataset/{available_class}')]
+    # shopfiles = [f'finalDataset/{available_class}/' +
+    #              f for f in os.listdir(f'finalDataset/{available_class}')]
+    shopfiles = [f'asos/only/' + f for f in os.listdir(f'asos/only')]
     # get the closest images
     closest_imgs = [shopfiles[i]
                     for i in closest_imgs_indexes if i < len(shopfiles)]
