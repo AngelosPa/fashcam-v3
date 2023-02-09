@@ -63,12 +63,12 @@ def get_closest_images(img_reshape, available_class):
     similar = []
     for i in range(0, nb_closest_images):
         # selecting the most similar with threshold 0.3
-        if closest_imgs_similarities[i] > 0.4:
-            # give the path of the image
-            similar.append(closest_imgs[i])
+        # if closest_imgs_similarities[i] > 0:
+        # give the path of the image
+        similar.append(closest_imgs[i])
 
     return similar[:3]
 
 
 # print(get_closest_images(
-#     r"C:\Users\mrpal\OneDrive\Desktop\fashcam-final\finalDataset\Belts\3721.jpg", "Outwear"))
+#     r"C:\Users\mrpal\OneDrive\Desktop\fashcam-v3\finalDataset\Belts\3721.jpg", "Outwear"))

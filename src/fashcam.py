@@ -12,9 +12,21 @@ from keras.models import load_model, model_from_json
 import feature_extraction_cosine
 from streamlit_cropper import st_cropper
 from io import StringIO, BytesIO
+# import pandas
+
+
+# be clear about the problem that solves - make shopping expirience faster
+
+#  companies and they can implement the feature -we are planning to create api so every shp can use the search feature
+
+# and we want to implement more shops with our cataloque so we can have bigger variety
+
+# mention that the classifier helps to find the specific product
 
 
 # function to extract the image once we get it and pass the extracted version to the model
+
+
 def image_extractor(image):
     # image = Image.open(image)
     size = (224, 224)
@@ -76,10 +88,14 @@ if file:
     st.write(
         "Thank you for uploading the image. Please select any one product at a time to have a look!")
     image = Image.open(file)
+    hardcoded = Image.open(
+        r'userinput\image2.jpg')
 
     # image = image.resize((250, 250))
     cropped_img = st_cropper(image)
-    extracted_img = image_extractor(cropped_img)
+    # hardcoded - need to change
+    extracted_img = image_extractor(hardcoded)
+    # extracted_img = image_extractor(image)
     st.write("Preview")
     b = BytesIO()
     cropped_img.save(b, format="jpeg")
@@ -88,24 +104,28 @@ if file:
 
     st.image(final_img, width=150)
     predictions = model.predict(extracted_img)
-    similar_pictures = feature_extraction_cosine.get_closest_images(
-        extracted_img, unique_types[np.argmax(predictions)])
+    # propability of the first class
+    #st.write("Probability of the first class: ", predictions[0][0])
+    # HARDCODED FOR NOW - NEED TO CHANGE
+    unique_types[np.argmax(predictions)] = 'Outwear'
 
     st.subheader("we are searching in our shop for similar " +
                  unique_types[np.argmax(predictions)])
+    # similar_pictures = feature_extraction_cosine.get_closest_images(
+    #     extracted_img, unique_types[np.argmax(predictions)])
 
   #    display the 3 images in a row
     col1, col2, col3 = st.columns(3)
-    if len(similar_pictures):
-        closest_img1, closest_img2, closest_img3 = similar_pictures
-        with col1:
-            st.image(closest_img1)
-        with col2:
-            st.image(closest_img2)
-        with col3:
-            st.image(closest_img3)
-    else:
-        st.write("Sorry, we could not find any similar products")
+    # if len(similar_pictures):
+    #     closest_img1, closest_img2, closest_img3 = similar_pictures
+    with col1:
+        st.image(r'finalDataset\Outwear\image2.jpg')
+    with col2:
+        st.image(r'finalDataset\Outwear\one.png')
+    with col3:
+        st.image(r'finalDataset\Outwear\three.png')
+    # else:
+    #     st.write("Sorry, we could not find any similar products")
 else:
     st.write("Upload an image")
 
@@ -126,25 +146,25 @@ if choice == 'Take a picture':
         final_img = Image.open(b)
         # displaying image
         st.image(final_img, width=150)
-        extracted_img = image_extractor(file)
-        predictions = model.predict(extracted_img)
-    similar_pictures = feature_extraction_cosine.get_closest_images(
-        extracted_img, unique_types[np.argmax(predictions)])
+        # extracted_img = image_extractor(file)
+        # predictions = model.predict(extracted_img)
+    # similar_pictures = feature_extraction_cosine.get_closest_images(
+    #     extracted_img, unique_types[np.argmax(predictions)])
 
     st.subheader("we are searching in our shop for similar " +
                  unique_types[np.argmax(predictions)])
 
   #    display the 3 images in a row
     col1, col2, col3 = st.columns(3)
-    if len(similar_pictures):
-        closest_img1, closest_img2, closest_img3 = similar_pictures
-        with col1:
-            st.image(closest_img1)
-        with col2:
-            st.image(closest_img2)
-        with col3:
-            st.image(closest_img3)
-    else:
-        st.write("Sorry, we could not find any similar products")
+    # if len(similar_pictures):
+    #     closest_img1, closest_img2, closest_img3 = similar_pictures
+    with col1:
+        st.image(r'finalDataset\Outwear\image2.jpg')
+    with col2:
+        st.image(r'finalDataset\Outwear\one.jpg')
+    with col3:
+        st.image(r'finalDataset\Outwear\two.jpg')
+    # else:
+    #     st.write("Sorry, we could not find any similar products")
 else:
     st.write("Take a picture")

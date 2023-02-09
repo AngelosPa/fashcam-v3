@@ -110,11 +110,11 @@ def get_features(img_paths, category_folder_name):
 
 # get the image names
 # make the path for each image
-# shopfiles = ['finalDataset/Outwear/' +
-#              f for f in os.listdir('finalDataset/Outwear')]
-# get_features(shopfiles, "0utwear")
+shopfiles = ['finalDataset/Outwear/' +
+             f for f in os.listdir('finalDataset/Outwear')]
+get_features(shopfiles, "Outwear")
 # create features for every category
-for i in range(len(unique_types)):
-    shopfiles = ['finalDataset/' + unique_types[i] + '/' +
-                 f for f in os.listdir('finalDataset/' + unique_types[i])]
-    get_features(shopfiles, unique_types[i])
+# for i in range(len(unique_types)):
+#     shopfiles = ['finalDataset/' + unique_types[i] + '/' +
+#                  f for f in os.listdir('finalDataset/' + unique_types[i])]
+#     get_features(shopfiles, unique_types[i])
