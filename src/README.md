@@ -1,3 +1,0 @@
-# FashCam
-
-# fashcam-v3
