@@ -1,23 +1,19 @@
 # fashcam - An image search engine 
 [Angelos Papagiannopoulos](https://github.com/AngelosPa) 
- # Abstract
 
+FashCam is an image search engine that uses computer vision to detect optical similar products for recommendation among an online shops inventory.
 
-  # Data
- 
-  # Algorithms
-1. Data 
 
 https://user-images.githubusercontent.com/73656043/217572626-d3545b07-ca3b-4509-8b60-025583c37710.mp4
 
+  # Data
+
+1. Kaggle
+
+2. rapid API 
 
 
-2. Kaggle
-
-3. rapid API 
-
-
-6. Models: 
+# Models: 
 
 convolutional neural network for classification
 
