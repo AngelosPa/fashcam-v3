@@ -144,11 +144,11 @@ if choice == 'Take a picture':
     if len(similar_pictures):
         closest_img1, closest_img2, closest_img3 = similar_pictures
     with col1:
-        st.image(r'finalDataset\Outwear\image2.jpg')
+        st.image(closest_img1)
     with col2:
-        st.image(r'finalDataset\Outwear\one.jpg')
+        st.image(closest_img2)
     with col3:
-        st.image(r'finalDataset\Outwear\two.jpg')
+        st.image(closest_img3)
 
 else:
     st.write("Take a picture")
