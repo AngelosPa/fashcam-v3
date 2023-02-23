@@ -131,6 +131,7 @@ if choice == 'Take a picture':
         final_img = Image.open(b)
         # displaying image
         st.image(final_img, width=150)
+        
         # extracted_img = image_extractor(file)
         # predictions = model.predict(extracted_img)
     similar_pictures = feature_extraction_cosine.get_closest_images(
